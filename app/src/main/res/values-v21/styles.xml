@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+		<item name="android:colorPrimary">@color/purple</item><!--7D25EE A169E8 C196FD-->
+		<item name="android:colorPrimaryDark">@color/purple_dark</item>
+		<item name="android:colorAccent">@color/purple</item>
+		<item name="android:colorControlHighlight">@color/purple</item>
+	</style>
+	
+	
+	<style name="AppTheme.Red" parent="@android:style/Theme.Material.Light.NoActionBar">
+		<item name="android:colorPrimary">#FA5151</item>
+		<item name="android:colorPrimaryDark">#F14D4D</item>
+		<item name="android:colorAccent">#E86969</item>
+		<item name="android:colorControlHighlight">#FD9696</item>
+	</style>
+</resources>

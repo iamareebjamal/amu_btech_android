@@ -1,0 +1,31 @@
+<?xml version = "1.0" encoding ="utf-8" ?>
+<resources>
+	<color name = "transparent" >#00000000</color >
+	<!-- card colors -->
+	<color name = "card_background" >#bbffffff</color >
+	<color name = "card_shadow_1" >#bbd4d4d4</color >
+	<color name = "card_shadow_2" >#bbdddddd</color >
+	<color name = "card_detailing" >#eee</color >
+	<color name = "card_backgroundX" >#9affffff</color >
+	<color name = "card_shadow_1X" >#9ad4d4d4</color >
+	<color name = "card_shadow_2X" >#9adddddd</color >
+	<color name = "card_backgroundXX" >#99ffffff</color >
+	<color name = "card_shadow_1XX" >#99d4d4d4</color >
+	<color name = "card_shadow_2XX" >#99dddddd</color >
+	<!-- bg colors -->
+	<color name = "red" >#F44336</color> <!--#ff3344 #D70014-->
+	<color name = "red_dark" >#D32F2F</color>
+	<color name = "blue" >#03A9F4</color>
+	<color name = "blue_dark" >#0288D1</color>
+	<color name = "purple">#7C4DFF</color>
+	<color name = "purple_dark">#6200EA</color>
+	<color name = "green" >#8BC34A</color>
+	<color name = "green_dark" >#689F38</color>
+	<color name = "yellow" >#FFC107</color>
+	<color name = "yellow_dark" >#FFA000</color>
+	<color name = "orange" >#FF6E40</color>
+	<color name = "orange_dark" >#FF3D00</color>
+	<color name = "teal">#009688</color>
+	<color name = "grey">#888888</color>
+	
+</resources>

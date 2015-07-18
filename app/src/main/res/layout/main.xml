@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/bg"
+	android:background="@color/purple"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:orientation="vertical"
+		android:id="@+id/ll"
+		android:gravity="right"
+		android:layout_marginTop="5dp"
+		android:paddingLeft="30dp"
+		android:paddingRight="30dp"
+		android:background="@drawable/card">
+
+		<EditText
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/fnEdt"
+			android:layout_marginTop="5dp"
+			android:maxLength="8"
+			android:hint="Faculty Number"/>
+
+		<EditText
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:maxLength="6"
+			android:hint="Enrolment Number"
+			android:id="@+id/enEdt"/>
+
+		<Button
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="Get Result"
+			android:layout_below="@id/enEdt"
+			android:layout_centerHorizontal="true"
+			android:textStyle="italic"
+			android:textColor="#8E5CF7"
+			android:onClick="getResult"
+			android:id="@+id/mainButton1"/>
+
+	</LinearLayout>
+
+	<ScrollView
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_below="@id/ll"
+		android:layout_marginTop="5dp"
+		android:layout_centerHorizontal="true">
+
+		<LinearLayout
+			android:id="@+id/marksLayout"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:orientation="vertical">
+
+			
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</RelativeLayout>
+
