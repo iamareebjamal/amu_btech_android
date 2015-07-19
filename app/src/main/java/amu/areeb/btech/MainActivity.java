@@ -11,6 +11,7 @@ import android.text.*;
 import android.animation.*;
 import android.net.*;
 import android.content.*;
+import android.content.ClipboardManager;
 import java.util.*;
 import android.util.*;
 import android.widget.TextView.*;
@@ -38,6 +39,7 @@ public class MainActivity extends Activity
 		
         setContentView(R.layout.main);
 		
+		
 		window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 		window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -51,6 +53,41 @@ public class MainActivity extends Activity
 		
 		fn.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(8)});
 		en.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(6)});
+		fn.setOnKeyListener(new OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event){
+				if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+						//if the enter key was pressed, then hide the keyboard and do whatever needs doing.
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						en.requestFocus();
+						en.postDelayed(new Runnable(){
+
+							@Override
+							public void run()
+							{
+								// TODO: Implement this method
+								imm.showSoftInput(en, InputMethodManager.SHOW_FORCED);
+								
+							}
+							
+							
+						}, 1);
+						
+					}
+					return true;
+				}
+				
+			});
+		en.setOnKeyListener(new OnKeyListener() {
+				public boolean onKey(View v, int keyCode, KeyEvent event){
+					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+						//if the enter key was pressed, then hide the keyboard and do whatever needs doing.
+						getResult(v);
+					}
+					return true;
+				}
+
+			});
+		
 		bg = (RelativeLayout) findViewById(R.id.bg);
 		
 		pd = new ProgressDialog(this);
@@ -188,6 +225,7 @@ public class MainActivity extends Activity
 		Spannable s = (Spannable) des.getText();
 		s.setSpan(new ForegroundColorSpan(getResources().getColor(getGradeColor(desc))), desc.length()-4, desc.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		marksLayout.addView(card);
+		copyText(card, info, desc);
 		return card;
 	}
 	
@@ -283,18 +321,18 @@ public class MainActivity extends Activity
 			modify(addCard("Subject:", row));
 			int[] colors = {BLUE, RED, GREEN, ORANGE, YELLOW, PURPLE, TEAL, RED_DARK, ORANGE_DARK, GREEN_DARK, YELLOW_DARK, BLUE_DARK};
 			for(int i = 0; i < subs.length; i++){
-				addSubjectCard(subs[i] + " :", marks[i], colors[i]);
+				addSubjectCard(subs[i], marks[i], colors[i]); 
 			}
-			addCard("SPI : " + spi, "CPI : " + cpi);
+			copyDialog(addCard("SPI : " + spi, "CPI : " + cpi), cpi, spi);
 			
 		} else if (result.equals(Result.WRONG_INFO)){
 			addCard("The Enrolment Number or Faculty Number you entered is either wrong or doesn't match the database.\nPlease try again.", "");
-		} else if (result.equals(Result.NO_RESULT)){
-			addCard(Result.NO_RESULT, "");
-		} else if (result.equals(Result.TIMEOUT)){
-			addCard(Result.TIMEOUT, "");
-		} else if (result.equals(Result.UNKNOWN_ERROR)){
-			addCard(Result.UNKNOWN_ERROR, "");
+		} else if (result.contains(Result.NO_RESULT)){
+			addCard(result, "");
+		} else if (result.contains(Result.TIMEOUT)){
+			addCard(result, "");
+		} else if (result.contains(Result.UNKNOWN_ERROR)){
+			addCard(result, "");
 		} else if (result.contains(Result.EXCEPTION)){
 			Toast.makeText(this, result.substring(Result.EXCEPTION.length()), Toast.LENGTH_LONG).show();
 		} else {
@@ -304,6 +342,107 @@ public class MainActivity extends Activity
 	}
 	
 	
+	public void copyText(View view, final String subject, final String marks){
+		
+		view.setOnClickListener(new View.OnClickListener(){
+
+				@Override
+				public void onClick(View p1)
+				{
+					// TODO: Implement this method
+					String items[] ={"Simple", "Advance"};
+					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+					alert.setTitle("Copy Style");
+					alert.setItems(items, new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								// TODO: Implement this method
+								String label = subject, text = "", splitMark[] = splitMarks(marks);
+								switch(p2){
+									case 0:
+										text = "I got " + splitMark[2] + " ("  + splitMark[3] + ")" +" marks in " + subject + "!";
+										break;
+									case 1:
+										text = subject + "\n\nSessional Marks:   " + splitMark[0] +"\nFinal Marks:            " + splitMark[1] + "\nTotal Marks:            " + splitMark[2] + "\nGrade:                       " + splitMark[3];
+								}
+								ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+								ClipData cdat = ClipData.newPlainText(label, text);
+								clip.setPrimaryClip(cdat);
+								Toast.makeText(getApplicationContext(), "Marks Copied", Toast.LENGTH_SHORT).show();
+							}
+						});
+					alert.show();
+				}
+
+			});
+		view.setOnLongClickListener(new View.OnLongClickListener(){
+
+				@Override
+				public boolean onLongClick(View p1)
+				{
+					// TODO: Implement this method
+					Toast.makeText(getApplicationContext(), "Copy " + subject + " Marks", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			});
+	}
+	
+	public void copyDialog(final View view, final String cpi, final String spi){
+		
+		view.setOnClickListener(new View.OnClickListener(){
+
+				@Override
+				public void onClick(View p1)
+				{
+					// TODO: Implement this method
+					String items[] = {"CPI : " + cpi, "SPI : " + spi};
+
+					AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+					alert.setTitle("What to Copy?");
+					alert.setItems(items, new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								// TODO: Implement this method
+								String label = "", text = "";
+								switch(p2){
+									case 0:
+										label = "CPI";
+										text = "My CPI is " + cpi;
+										break;
+									case 1:
+										label = "SPI";
+										text = "My SPI is " + cpi;
+										break;
+								}
+								ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+								ClipData cdat = ClipData.newPlainText(label, text);
+								clip.setPrimaryClip(cdat);
+								Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
+							}
+						});
+					alert.show();
+				}
+			});
+		view.setOnLongClickListener(new View.OnLongClickListener(){
+
+				@Override
+				public boolean onLongClick(View p1)
+				{
+					// TODO: Implement this method
+					Toast.makeText(getApplicationContext(), "Copy CPI/SPI", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			});
+	}
+	
+	public static String[] splitMarks(String marks){
+		String splitted[] = marks.trim().replaceAll(" +", " ").split(" ");
+		return splitted;
+	}
 	
 	private class GetResult extends AsyncTask<String, Void, String>
 	{
@@ -311,7 +450,6 @@ public class MainActivity extends Activity
 		
         @Override
         protected String doInBackground(String... strings) {
-            
             return mResult.getResultString(strings[0], strings[1], strings[2]);
         }
 		

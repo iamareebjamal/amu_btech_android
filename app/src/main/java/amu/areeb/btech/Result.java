@@ -26,7 +26,7 @@ public class Result implements Parcelable
 	}
 	
 	
-	
+	private int timeout_count;
 	private String name, CPI, SPI, subjects[], marks[];
 	public static String WRONG_INFO = "Faculty_No or En_No is incorrect!", NO_RESULT = "This Result has not been declared yet!", SUCCESS="Result downloaded successfully!", UNKNOWN_ERROR="Couldn't get result due to unknown Error!", TIMEOUT = "Timeout while connecting to website\nPlease check your connection and try again", EXCEPTION="iaj.Exception:";
 	
@@ -95,8 +95,8 @@ public class Result implements Parcelable
 	public String getResultString(String url, String enNo, String facNo){
 		StringBuffer buffer = new StringBuffer();
 		try {
-			
-			Document doc  = Jsoup.connect(url).data("EN", enNo, "FN", facNo,"submit","submit").method(Connection.Method.POST).post();
+			timeout_count = 0;
+			Document doc  = Jsoup.connect(url).data("EN", enNo, "FN", facNo,"submit","submit").method(Connection.Method.POST).timeout(2000).post();
 			String page = doc.toString();
 			if (doc.toString().contains(WRONG_INFO))
 			{
@@ -149,7 +149,12 @@ public class Result implements Parcelable
 
 		}
 		catch (SocketTimeoutException e){
-			buffer.append(TIMEOUT);
+			String site_down = "";
+			if(timeout_count > 3){
+				site_down = "\n\nSite appears to be down or inaccessible due to connection error. Please try after some time";
+			}
+			buffer.append(TIMEOUT+site_down);
+			timeout_count++;
 		}
 		catch (Throwable t)
 		{

@@ -23,12 +23,14 @@
 			android:layout_width="fill_parent"
 			android:id="@+id/fnEdt"
 			android:layout_marginTop="5dp"
+			android:inputType="textEmailSubject"
 			android:maxLength="8"
 			android:hint="Faculty Number"/>
 
 		<EditText
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
+			android:inputType="textEmailSubject"
 			android:maxLength="6"
 			android:hint="Enrolment Number"
 			android:id="@+id/enEdt"/>
