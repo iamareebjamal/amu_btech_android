@@ -9,22 +9,9 @@ import java.sql.*;
 import android.os.*;
 import android.text.*;
 
-public class Result implements Parcelable
+public class Result
 {
 
-	@Override
-	public int describeContents()
-	{
-		// TODO: Implement this method
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel p1, int p2)
-	{
-		// TODO: Implement this method
-	}
-	
 	
 	private int timeout_count;
 	private String name, CPI, SPI, subjects[], marks[];
@@ -164,15 +151,4 @@ public class Result implements Parcelable
 		return buffer.toString();
 	}
 
-	@SuppressWarnings("unused")
-	public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>(){
-		@Override
-		public Result createFromParcel(Parcel in) {
-			return new Result();
-		}
-		@Override
-		public Result[] newArray (int size) {
-			return new Result[size];
-		}
-	};
 }

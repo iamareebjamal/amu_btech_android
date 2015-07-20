@@ -5,6 +5,15 @@
 		<item name="android:colorPrimaryDark">@color/purple_dark</item>
 		<item name="android:colorAccent">@color/purple</item>
 		<item name="android:colorControlHighlight">@color/purple</item>
+		<item name="android:alertDialogTheme">@style/Theme.AlertDialog</item>
+	</style>
+	
+	<style name="Theme.AlertDialog" parent="android:Theme.Material.Light.Dialog">
+		<item name="android:colorPrimary">@color/purple</item><!--7D25EE A169E8 C196FD-->
+		<item name="android:colorPrimaryDark">@color/purple_dark</item>
+		<item name="android:colorAccent">@color/purple</item>
+		<item name="android:colorControlHighlight">@color/purple</item>
+		<item name="android:minWidth">600dp</item>
 	</style>
 	
 	

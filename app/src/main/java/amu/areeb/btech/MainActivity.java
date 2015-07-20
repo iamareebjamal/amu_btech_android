@@ -28,9 +28,88 @@ public class MainActivity extends Activity
 	ProgressDialog pd;
 	Result mResult;
 	
-	String status;
-	
 	int RED = R.color.red, RED_DARK = R.color.red_dark, BLUE = R.color.blue, BLUE_DARK = R.color.blue_dark, GREEN = R.color.green, GREEN_DARK = R.color.green_dark, YELLOW = R.color.yellow, YELLOW_DARK = R.color.yellow_dark, ORANGE = R.color.orange, ORANGE_DARK = R.color.orange_dark, PURPLE = R.color.purple, PURPLE_DARK = R.color.purple_dark, TEAL = R.color.teal, GREY = R.color.grey;
+	
+	////////////// Result Saving Workaround ////////////
+	
+	private String saveStatus, saveResult, saveCPI, saveSPI, saveName, saveMarks[], saveSubjects[];
+	
+	private void setStatus(String status){
+		this.saveStatus = status;
+	}
+	
+	private void setResult(String result){
+		this.saveResult = result;
+	}
+	
+	private void setCPI(String CPI){
+		this.saveCPI = CPI;
+	}
+
+	private void setSPI(String SPI){
+		this.saveSPI = SPI;
+	}
+	
+	private void setName(String name){
+		this.saveName = name;
+	}
+	
+	private void setMarks(String[] marks){
+		this.saveMarks = marks;
+	}
+	
+	private void setSubjects(String[] subjects){
+		this.saveSubjects = subjects;
+	}
+	
+	private String getStatus(){
+		return saveStatus;
+	}
+
+	private String getResult(){
+		return saveResult;
+	}
+
+	private String getCPI(){
+		return saveCPI;
+	}
+
+	private String getSPI(){
+		return saveSPI;
+	}
+
+	private String getName(){
+		return saveName;
+	}
+
+	private String[] getMarks(){
+		return saveMarks;
+	}
+
+	private String[] getSubjects(){
+		return saveSubjects;
+	}
+	
+	private void populate(Result result, String result_string){
+		setResult(result_string);
+		setCPI(result.getCPI());
+		setSPI(result.getSPI());
+		setName(result.getName());
+		setMarks(result.getMarks());
+		setSubjects(result.getSubjects());
+	}
+	
+	private void populate(String result, String name, String cpi, String spi, String marks[], String subjects[]){
+		setResult(result);
+		setCPI(cpi);
+		setSPI(spi);
+		setName(name);
+		setMarks(marks);
+		setSubjects(subjects);
+	}
+	
+	
+	/////////////            End           ////////////
 	
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +117,9 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
 		
         setContentView(R.layout.main);
+		
+		SharedPreferences pref = getSharedPreferences("data", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
 		
 		
 		window = getWindow();
@@ -99,9 +181,13 @@ public class MainActivity extends Activity
 	@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-		outState.putString("status", getSuccessStatus());
-		if(mResult!=null){
-        	outState.putParcelable("result", mResult);
+		outState.putString("result", getResult());
+		if(getSubjects()!=null){
+        	outState.putString("name", getName());
+			outState.putString("cpi", getCPI());
+			outState.putString("spi", getSPI());
+			outState.putStringArray("marks", getMarks());
+			outState.putStringArray("subjects", getSubjects());
 		}
     }
 	
@@ -110,10 +196,19 @@ public class MainActivity extends Activity
 		// TODO Auto-generated method stub
 		super.onRestoreInstanceState(savedInstanceState);
 		try{
-			String status = savedInstanceState.getString("status");
-			mResult=savedInstanceState.getParcelable("result");
-			if(mResult!=null){
-				manageResult(status);
+			String result = savedInstanceState.getString("result");
+			String name = savedInstanceState.getString("name");
+			String cpi = savedInstanceState.getString("cpi");
+			String spi = savedInstanceState.getString("spi");
+			String[] marks = savedInstanceState.getStringArray("marks");
+			String[] subjects = savedInstanceState.getStringArray("subjects");
+			if(subjects!=null){
+				try{
+					populate(result, name, cpi, spi, marks, subjects);
+					manageResult();
+				} catch (NullPointerException e){
+					e.printStackTrace();
+				}
 			}
 			
 		} catch (BadParcelableException e){
@@ -129,15 +224,6 @@ public class MainActivity extends Activity
 		Toast.makeText(this, "Asta La Vista Baby", Toast.LENGTH_SHORT).show();
 	}*/
 	
-	
-	
-    public void setSuccessStatus(String result){
-		this.status = result;
-	}
-	
-	public String getSuccessStatus(){
-		return this.status;
-	}
 	
 	public void celebrateCPI(String CPI){
 		int BG = 0, ST = 0;
@@ -306,16 +392,16 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	public void manageResult(String result){
-		setSuccessStatus(result);
+	public void manageResult(){
+		String result = getResult();
 		removeCards();
 		String cpi = "fail";
 		if (result.equals(Result.SUCCESS)){
-			cpi = mResult.getCPI();
-			String spi = mResult.getSPI();
-			String[] subs = mResult.getSubjects();
-			String[] marks = mResult.getMarks();
-			String name = mResult.getName();
+			cpi = getCPI();
+			String spi = getSPI();
+			String[] subs = getSubjects();
+			String[] marks = getMarks();
+			String name = getName();
 			addCard("Name : ", name);
 			String row = String.format("%s%8s%8s%8s", "Sessional", "Final", "Total", "Grade");
 			modify(addCard("Subject:", row));
@@ -459,7 +545,8 @@ public class MainActivity extends Activity
             super.onPostExecute(s);
 			//Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
 			pd.dismiss();
-			manageResult(s);
+			populate(mResult, s);
+			manageResult();
         }
 	}
 }
