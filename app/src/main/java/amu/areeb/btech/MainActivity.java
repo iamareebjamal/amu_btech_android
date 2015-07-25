@@ -1,24 +1,29 @@
 package amu.areeb.btech;
 
-import android.app.*;
-import android.os.*;
-import android.widget.*;
-import android.view.*;
-import android.text.style.*;
-import android.graphics.drawable.*;
-import android.graphics.*;
-import android.text.*;
 import android.animation.*;
-import android.net.*;
+import android.app.*;
 import android.content.*;
-import android.content.ClipboardManager;
-import java.util.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.os.*;
+import android.text.*;
+import android.text.style.*;
 import android.util.*;
-import android.widget.TextView.*;
+import android.view.*;
+import android.view.View.*;
 import android.view.inputmethod.*;
+import android.widget.*;
+import android.widget.TextView.*;
+import java.util.*;
 
-public class MainActivity extends Activity 
+import android.content.ClipboardManager;
+
+public class MainActivity extends Activity
 {
+
+	
+
 	Window window;
 	EditText fn;
 	EditText en;
@@ -118,10 +123,6 @@ public class MainActivity extends Activity
 		
         setContentView(R.layout.main);
 		
-		SharedPreferences pref = getSharedPreferences("data", Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = pref.edit();
-		
-		
 		window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 		window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -135,7 +136,9 @@ public class MainActivity extends Activity
 		
 		fn.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(8)});
 		en.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(6)});
-		fn.setOnKeyListener(new OnKeyListener() {
+		
+		fn.setOnKeyListener(new View.OnKeyListener() {
+			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event){
 				if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
 						//if the enter key was pressed, then hide the keyboard and do whatever needs doing.
@@ -153,22 +156,29 @@ public class MainActivity extends Activity
 							
 							
 						}, 1);
+						return true;
 						
-					}
-					return true;
-				}
+				} /*else if (keyCode == KeyEvent.KEYCODE_BACK) {
+					MainActivity.this.finish();
+				}*/
+					return false;
+			}
 				
-			});
-		en.setOnKeyListener(new OnKeyListener() {
+		});
+		en.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int keyCode, KeyEvent event){
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
 						//if the enter key was pressed, then hide the keyboard and do whatever needs doing.
 						getResult(v);
-					}
-					return true;
-				}
+						return true;
+					} /*else if (keyCode == KeyEvent.KEYCODE_BACK) {
+						MainActivity.this.finish();
+					}*/
+					return false;
+			}
 
-			});
+		});
+		
 		
 		bg = (RelativeLayout) findViewById(R.id.bg);
 		
@@ -392,11 +402,13 @@ public class MainActivity extends Activity
 		}
 	}
 	
+	static int timeout=0;
 	public void manageResult(){
 		String result = getResult();
 		removeCards();
 		String cpi = "fail";
 		if (result.equals(Result.SUCCESS)){
+			timeout=0;
 			cpi = getCPI();
 			String spi = getSPI();
 			String[] subs = getSubjects();
@@ -416,7 +428,11 @@ public class MainActivity extends Activity
 		} else if (result.contains(Result.NO_RESULT)){
 			addCard(result, "");
 		} else if (result.contains(Result.TIMEOUT)){
+			String error = result;
+			if(timeout>3)
+				error+="\n\nEither connection is weak or busy!\nOr the site appears to be down. Please try after some time";
 			addCard(result, "");
+			timeout++;
 		} else if (result.contains(Result.UNKNOWN_ERROR)){
 			addCard(result, "");
 		} else if (result.contains(Result.EXCEPTION)){
