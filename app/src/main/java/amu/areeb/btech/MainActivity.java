@@ -186,6 +186,8 @@ public class MainActivity extends Activity
 		pd.setMessage("Getting Result");
 		pd.setCanceledOnTouchOutside(false);
 		pd.setCancelable(false);
+		UpdateChecker upd = new UpdateChecker(this);
+		upd.getUpdate();
     }
 	
 	@Override
@@ -469,9 +471,7 @@ public class MainActivity extends Activity
 									case 1:
 										text = subject + "\n\nSessional Marks:   " + splitMark[0] +"\nFinal Marks:            " + splitMark[1] + "\nTotal Marks:            " + splitMark[2] + "\nGrade:                       " + splitMark[3];
 								}
-								ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-								ClipData cdat = ClipData.newPlainText(label, text);
-								clip.setPrimaryClip(cdat);
+								copy(getApplicationContext(), label, text);
 								Toast.makeText(getApplicationContext(), "Marks Copied", Toast.LENGTH_SHORT).show();
 							}
 						});
@@ -520,9 +520,7 @@ public class MainActivity extends Activity
 										text = "My SPI is " + cpi;
 										break;
 								}
-								ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-								ClipData cdat = ClipData.newPlainText(label, text);
-								clip.setPrimaryClip(cdat);
+								copy(getApplicationContext(), label, text);
 								Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
 							}
 						});
@@ -539,6 +537,12 @@ public class MainActivity extends Activity
 					return true;
 				}
 			});
+	}
+	
+	public static void copy(Context ctx, String label, String text){
+		ClipboardManager clip = (ClipboardManager) ctx.getApplicationContext().getSystemService(CLIPBOARD_SERVICE);
+		ClipData cdat = ClipData.newPlainText(label, text);
+		clip.setPrimaryClip(cdat);
 	}
 	
 	public static String[] splitMarks(String marks){
